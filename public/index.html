@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Вконтакте-mp3</title>
+    <link rel="icon" href="../public/img/logo4.png" type="image/png">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="main.css">
+</head>
+
+<body>
+
+    <main class="observatory-style">
+        <div class="top-section">
+            <h1 class="main-title">Скачать музыку ВКонтакте</h1>
+        </div>
+        <div class="form-section">
+            <form id="downloadAudioForm">
+                <label for="audioUrl">Введите ссылку на аудио:</label>
+                <div class="content_input">
+                    <input type="text" id="audioUrl" placeholder="" required>
+                    <button type="submit" class="btn btn-primary">Скачать музыку</button>
+                </div>
+            </form>
+        </div>
+        <div class="audio-info-section" id="audioInfo" style="display: none;">
+            <p id="audioTitle"></p>
+            <a id="audioDownloadLink" download class="btn btn-success">Скачать</a>
+        </div>
+        <div id="errorMessage"></div>
+        <div class="background-overlay"></div>
+    </main>
+
+    <script>
+        document.getElementById('downloadAudioForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const audioUrl = document.getElementById('audioUrl').value;
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.innerText = ''; // Очищаем сообщение об ошибке
+
+            try {
+                const response = await fetch('/download-audio', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ url: audioUrl }),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Ошибка при скачивании аудио');
+                }
+
+                const blob = await response.blob();
+                const filename = response.headers.get('Content-Disposition')?.split('filename=')[1]?.replace(/"/g, '') || 'audio.mp3';
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = decodeURIComponent(filename); // Используем имя файла из заголовка
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(downloadUrl);
+            } catch (error) {
+                console.error('Ошибка:', error);
+                errorMessage.innerText = error.message;
+            }
+        });
+    </script>
+</body>
+
+</html>
