@@ -31,3 +31,11 @@ const ACCESS_TOKEN = ''; // Ваш токен
 # Откройте в удобном для вас баразуре
 # Вставьте ссылку на аудио из ВК в формате (https://vk.com/audio123456789_123456789)
 Нажмите "Скачать музыку" браузер предложит сохранить mp3 файл. 
+
+Установка chocolotay 🍫
+# Пункт - 1. Установка пакетного менеджера Chocolotay
+• Запускаем PowerShell от имени администратора
+• Введите поочередно команды:
+1) Get-ExecutionPolicy
+2) Set-ExecutionPolicy Bypass -Scope Process -Force
+3) Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
